@@ -1,5 +1,6 @@
 import streamlit as st
 import arxiv
+import urllib.request
 from langchain_community.document_loaders import PyPDFLoader
 from google import genai
 
@@ -27,15 +28,17 @@ if st.button("پیپر پروسیس اور کوڈ جنریٹ کریں"):
                 # 1. پیپر کی شناخت (ID) الگ کرنا
                 paper_id = arxiv_url.split("/")[-1].split("v")[0]
                 
-                # 2. نئے طریقے سے Arxiv سے پیپر تلاش کرنا
+                # 2. Arxiv سے پیپر تلاش کرنا
                 client_arxiv = arxiv.Client()
                 search = arxiv.Search(id_list=[paper_id])
                 paper = next(client_arxiv.results(search))
                 
-                st.success(f"کامیاب! پیپر ڈاؤن لوڈ ہو گیا ہے: {paper.title}")
+                st.success(f"کامیاب! پیپر مل گیا ہے: {paper.title}")
                 
-                # 3. PDF ڈاؤن لوڈ کرنا
-                pdf_path = paper.download_pdf(filename="downloaded_paper.pdf")
+                # 3. PDF کا اصل لنک بنا کر ڈاؤن لوڈ کرنا
+                pdf_url = f"https://arxiv.org/pdf/{paper_id}.pdf"
+                pdf_path = "downloaded_paper.pdf"
+                urllib.request.urlretrieve(pdf_url, pdf_path)
                 
                 # 4. PDF سے ڈیٹا لوڈ کرنا
                 loader = PyPDFLoader(pdf_path)
@@ -68,4 +71,4 @@ if st.button("پیپر پروسیس اور کوڈ جنریٹ کریں"):
                 
         except Exception as e:
             st.error(f"کوئی خرابی پیش آگئی ہے: {e}")
-            
+                    

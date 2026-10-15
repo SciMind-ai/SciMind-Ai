@@ -11,7 +11,7 @@ st.title("🔬 SciMind AI: Research Paper to Code")
 st.write("arXiv ریسرچ پیپر کا لنک درج کریں، اور Gemini AI خود بخود اس کے ریاضیاتی ماڈلز اور کوڈ کا تجزیہ کرے گا!")
 
 # یہاں آپ کی پکی API Key محفوظ ہے
-GEMINI_API_KEY = "AQ.Ab8RN6Ku0vLqV4ticwSIqi9KyKIyLWCCjACG1PsY2Afk71AGCQ"
+GEMINI_API_KEY = "AQ.Ab8RN6IWRpCnnbthN7_jIdU4VGHciHWqaah2FNISnUI_G4_2ug"
 
 # ان پٹ خانہ (صرف URL کے لیے)
 arxiv_url = st.text_input("arXiv پیپر کا لنک درج کریں (مثلاً: https://arxiv.org/abs/1706.03762)", "https://arxiv.org/abs/2106.09685")

@@ -1,31 +1,31 @@
 import streamlit as st
 import arxiv
 from langchain_community.document_loaders import PyPDFLoader
-from openai import OpenAI
-import os
+from google import genai
 
 # صفحے کی سیٹنگ
 st.set_page_config(page_title="SciMind AI", page_icon="🔬", layout="centered")
 
 st.title("🔬 SciMind AI: Research Paper to Code")
-st.write("arXiv ریسرچ پیپر کا لنک درج کریں، اور اے آئی کی مدد سے اس کے ریاضیاتی ماڈلز اور کوڈ کا تجزیہ کریں!")
+st.write("arXiv ریسرچ پیپر کا لنک درج کریں، اور Gemini AI خود بخود اس کے ریاضیاتی ماڈلز اور کوڈ کا تجزیہ کرے گا!")
 
-# OpenAI API Key ان پٹ (سائیڈ بار یا مین سکرین پر)
-api_key = st.text_input("с اپنی OpenAI API Key درج کریں:", type="password")
+# یہاں اپنی Gemini API Key مستقل طور پر درج کر دیں
+GEMINI_API_KEY = "AQ.Ab8RN6Ku0vLqV4ticwSIqi9KyKIyLWCCjACG1PsY2Afk71AGCQ"
 
-# ان پٹ خانہ (URL کے لیے)
+# ان پٹ خانہ (صرف URL کے لیے)
 arxiv_url = st.text_input("arXiv پیپر کا لنک درج کریں (مثلاً: https://arxiv.org/abs/1706.03762)")
 
 if st.button("پیپر پروسیس اور کوڈ جنریٹ کریں"):
-    if not api_key:
-        st.warning("براہ کرم پہلے اپنی OpenAI API Key درج کریں!")
-    elif not arxiv_url:
+    if not arxiv_url:
         st.warning("براہ کرم کوئی درست arXiv لنک درج کریں!")
+    elif GEMINI_API_KEY == "YAHAN_APNI_ASLI_GEMINI_API_KEY_LIKHEIN":
+        st.error("براہ کرم کوڈ میں اپنی درست Gemini API Key درج کریں!")
     else:
         try:
-            client = OpenAI(api_key=api_key)
+            # Google GenAI کلائنٹ (پکی کی کے ساتھ)
+            client = genai.Client(api_key=GEMINI_API_KEY)
             
-            with st.spinner("پیپر ڈاؤن لوڈ اور اے آئی تجزیہ جاری ہے... براہ کرم انتظار کریں..."):
+            with st.spinner("پیپر ڈاؤن لوڈ اور AI تجزیہ جاری ہے... براہ کرم انتظار کریں..."):
                 # 1. پیپر کی شناخت (ID) الگ کرنا
                 paper_id = arxiv_url.split("/")[-1].split("v")[0]
                 
@@ -47,9 +47,9 @@ if st.button("پیپر پروسیس اور کوڈ جنریٹ کریں"):
                 for page in pages[:3]:  # پہلے 3 صفحات کا متن
                     paper_text += page.page_content + "\n"
                 
-                st.info("اے آئی ریسرچ پیپر سے ریاضیاتی ماڈلز اور پائتھون کوڈ تیار کر رہا ہے...")
+                st.info("Gemini AI ریسرچ پیپر سے ریاضیاتی ماڈلز اور پائتھون کوڈ تیار کر رہا ہے...")
                 
-                # 5. OpenAI کے ذریعے تجزیہ اور کوڈ جنریشن
+                # 5. Gemini AI کے ذریعے تجزیہ
                 prompt = f"""
                 You are an expert AI scientist and programmer. Analyze the following research paper text and:
                 1. Extract the core mathematical models/equations.
@@ -59,16 +59,13 @@ if st.button("پیپر پروسیس اور کوڈ جنریٹ کریں"):
                 {paper_text[:4000]}
                 """
                 
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.2
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt
                 )
                 
-                ai_output = response.choices[0].message.content
-                
                 st.subheader("📊 ریاضیاتی ماڈلز اور جنریٹ شدہ کوڈ:")
-                st.markdown(ai_output)
+                st.markdown(response.text)
                 
         except Exception as e:
             st.error(f"کوئی خرابی پیش آگئی ہے: {e}")

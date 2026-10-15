@@ -1,7 +1,7 @@
+streamlit
 arxiv
 langchain
 langchain-community
 pypdf
-openai
-streamlit
+google-genai
 

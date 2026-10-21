@@ -1,7 +1,0 @@
-streamlit
-arxiv
-langchain
-langchain-community
-pypdf
-google-genai
-
